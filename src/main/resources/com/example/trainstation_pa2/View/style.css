@@ -1,0 +1,66 @@
+/*visualisation*/
+.circle {
+    -fx-stroke: #8B0000;
+    -fx-stroke-width: 2px;
+}
+
+.reached_colour { /*red*/
+    -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #FF5E5E, #B22222);
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.7), 10, 0.5, 0, 0);
+}
+
+.notreached_colour { /*green*/
+    -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #7FFFD4, #228B22);
+}
+
+.reachnext_colour { /*green<->white*/
+    -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #7FFFD4, #228B22);
+    -fx-animation: flash 1s infinite;
+}
+@keyframes reachnext_flashing {
+    0%   { -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #7FFFD4, #228B22); }
+    50%  { -fx-fill: white; }
+    100% { -fx-fill: linear-gradient(from 0% 0% to 100% 100%, #7FFFD4, #228B22); }
+}
+
+/*gui*/
+.title {
+    -fx-font-family: "Segoe UI";
+    -fx-font-style: italic;
+}
+
+.title .label {
+    -fx-font-family: "Segoe UI";
+    -fx-font-style: italic;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.button {
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+.button:pressed {
+    -fx-background-color: #AAAAAA;
+    -fx-translate-y: 2px;
+    -fx-effect: innershadow(gaussian, rgba(0,0,0,0.4), 4, 0, 0, 2);
+}
+
+.reset_button {
+    -fx-background-color: #9C0002;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.tick_button {
+    -fx-background-color: #0200A4;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.boldtext {
+    -fx-font-weight: bold;
+}

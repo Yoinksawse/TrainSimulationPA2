@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.trainstation_pa2.Controller.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <GridPane prefHeight="70.0" prefWidth="600.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="537.5999755859375" minWidth="10.0" prefWidth="67.79998779296875" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.6000122070312" minWidth="10.0" prefWidth="460.6000122070312" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="323.1999755859375" minWidth="10.0" prefWidth="75.9999877929688" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ImageView fitHeight="58.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@train.png" />
+               </image>
+            </ImageView>
+            <AnchorPane fx:id="title_text" prefHeight="200.0" prefWidth="200.0" styleClass="title" GridPane.columnIndex="1" />
+            <Text fx:id="timecounter_text" GridPane.columnIndex="2" />
+         </children>
+      </GridPane>
+      <GridPane prefHeight="395.0" prefWidth="600.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="339.2000244140625" minHeight="10.0" prefHeight="339.2000244140625" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="47.60001220703123" minHeight="10.0" prefHeight="33.39997558593751" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <GridPane prefHeight="313.0" prefWidth="200.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints maxHeight="91.79999389648438" minHeight="10.0" prefHeight="17.800013160705568" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="91.79999389648438" minHeight="10.0" prefHeight="25.799990081787108" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="91.79999389648438" minHeight="8.600000000000009" prefHeight="23.600006103515625" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="235.60000610351562" minHeight="10.0" prefHeight="232.39999389648438" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="36.00003662109373" minHeight="10.0" prefHeight="36.00003662109373" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                <Button fx:id="loadline_button" mnemonicParsing="false" onAction="#onAddLine" prefHeight="17.0" prefWidth="195.0" text="Load" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Button>
+                  <TextField fx:id="loadlinename_inputfield" prefHeight="9.0" prefWidth="195.0" GridPane.rowIndex="1" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="MRT Line" />
+                  <Button fx:id="resetsimulation_button" mnemonicParsing="false" onAction="#resetSimulation" prefHeight="29.0" prefWidth="195.0" styleClass="reset_button" text="Reset Simulation" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <TextArea fx:id="displaystations_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
+               </children>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </GridPane>
+            <GridPane GridPane.columnIndex="1">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="91.79999389648438" minHeight="10.0" prefHeight="23.199981689453125" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="91.79999389648438" minHeight="10.0" prefHeight="21.600018310546872" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="196.40001525878907" minHeight="8.600000000000009" prefHeight="158.99999389648437" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="206.4000183105469" minHeight="10.0" prefHeight="22.199987792968756" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="87.20000610351565" minHeight="10.0" prefHeight="26.40001220703124" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="87.20000610351565" minHeight="10.0" prefHeight="19.19999999999999" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="87.20000610351565" minHeight="10.0" prefHeight="27.199975585937523" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="87.20000610351565" minHeight="10.0" prefHeight="44.80002441406248" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <GridPane prefHeight="25.0" prefWidth="195.0" GridPane.rowIndex="3">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="Monitor_button" mnemonicParsing="false" onAction="#monitorTrain" prefHeight="22.0" prefWidth="97.0" text="Monitor">
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets left="1.5" />
+                           </GridPane.margin>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="Remove_button" mnemonicParsing="false" onAction="#removeTrain" prefHeight="22.0" prefWidth="97.0" text="Remove" GridPane.columnIndex="1">
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" />
+                           </padding>
+                           <GridPane.margin>
+                              <Insets left="1.5" />
+                           </GridPane.margin>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </GridPane>
+                  <TextField fx:id="searchtrain_inputfield" onKeyTyped="#findTrain" prefHeight="23.0" prefWidth="195.0" promptText="Type to search trains" GridPane.rowIndex="1" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Trains" />
+                  <GridPane GridPane.rowIndex="4">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.20001220703125" minWidth="10.0" prefWidth="47.20001220703125" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="132.8000244140625" minWidth="10.0" prefWidth="121.6" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.20001220703125" minWidth="10.0" prefWidth="27.19999999999999" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#stopMonitoring" prefHeight="23.0" prefWidth="0.0" text="x" GridPane.columnIndex="2" fx:id="x_button">
+                           <GridPane.margin>
+                              <Insets left="2.0" right="2.0" />
+                           </GridPane.margin>
+                        </Button>
+                        <TextField fx:id="trainstat_displaybox" GridPane.columnIndex="1">
+                           <GridPane.margin>
+                              <Insets left="2.0" right="2.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="trainnumber_inputfield">
+                           <GridPane.margin>
+                              <Insets left="1.0" right="2.0" />
+                           </GridPane.margin>
+                        </TextField>
+                     </children>
+                  </GridPane>
+                  <Text fill="#5e5959" strokeType="OUTSIDE" strokeWidth="0.0" text=" Add Train" wrappingWidth="86.42730712890625" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </Text>
+                  <TextField fx:id="addtrainid_inputfield" prefHeight="21.0" prefWidth="195.0" promptText="Train ID (Exactly 4 characters)" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="9.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="addtrain_button" mnemonicParsing="false" onAction="#addTrain" prefHeight="29.0" prefWidth="195.0" text="Add Train" GridPane.rowIndex="7">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <TextArea fx:id="displaytrains_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+               </children>
+               <padding>
+                  <Insets right="5.0" />
+               </padding>
+            </GridPane>
+            <GridPane prefHeight="360.0" prefWidth="200.0" GridPane.columnIndex="2">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="91.79999389648438" minHeight="8.800005149841311" prefHeight="20.80001220703125" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="295.1999938964844" minHeight="10.0" prefHeight="283.0000244140625" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="35.79997558593749" minHeight="10.0" prefHeight="35.79997558593749" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Line Monitor" />
+                  <Button fx:id="tick_button" mnemonicParsing="false" onAction="#nexttick" prefHeight="30.0" prefWidth="198.0" styleClass="tick_button" text="Tick" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <TextArea fx:id="linemonitor_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <Hyperlink fx:id="aboutprogrammer_link" onAction="#showIntro" text="About Programmer" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Hyperlink>
+            <Button fx:id="showMap_button" mnemonicParsing="false" onAction="#showMap" text="Display Map" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </GridPane>
+   </children>
+</VBox>
