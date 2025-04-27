@@ -1,28 +1,21 @@
-package com.example.trainstation_pa2;
+package com.example.trainstation_pa2.Model;
 
 import com.example.trainstation_pa2.Controller.HelloController;
-import com.example.trainstation_pa2.Model.Line;
-import com.example.trainstation_pa2.Model.Station;
-import com.example.trainstation_pa2.Model.visualLine;
-import javafx.scene.Scene;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class VisualApplication {
-    Stage stage = HelloApplication.importStage();
-
+public class visualSimulation {
     Line thisLine;
     ArrayList<Station> stations = new ArrayList<>();
     ArrayList<Integer> travelTime = new ArrayList<>();
     private double y_pos = 200.0;
 
-    public void visualise() {
+    public Group visualise() {
         //setup Line and Stations arraylist
         this.thisLine = this.importLine();
         assert thisLine != null;
@@ -30,6 +23,7 @@ public class VisualApplication {
         stations.addAll(Arrays.asList(stationsArr));
 
         // create canvas
+        Group root = new Group();
         Canvas canvas = new Canvas(1000, 620);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -37,14 +31,9 @@ public class VisualApplication {
 
         newLine(gc, this.thisLine.getName(), this.thisLine.getCode(), stations, travelTime, y_pos);
 
-        //setup scene + get stage
-        StackPane root = new StackPane();
+        //setup setup scene (return group)
         root.getChildren().add(canvas);
-
-        Scene scene = new Scene(root, 1000, 620);
-        scene.getStylesheets().add(VisualApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
-        stage.setScene(scene);
-        stage.show();
+        return root;
     }
 
     public void newLine(GraphicsContext gc, String lineName, String lineCode, ArrayList<Station> stations, ArrayList<Integer> travelTimes, double y_pos) {

@@ -34,21 +34,24 @@ public class visualStation {
             this.reached = false;
             this.reachNext = false;
             //set col to pure green
-            circle.setFill(Color.web("#4D8D6A"));
+            circle.getStyleClass().add("notreached-colour");
         }
         else if (status == 1) {
             this.reached = true;
             this.reachNext = false;
             //set col to pink
-            circle.setFill(Color.web("#692F45"));
+            circle.getStyleClass().add("reached-colour");
         }
         else if (status == 2) {
             this.reached = false;
             this.reachNext = true;
+            //set col to pure green
+            circle.getStyleClass().add("reaching-colour");
+            /*
             FillTransition fillTransition = new FillTransition();
             //styles
             fillTransition.setShape(circle);
-            fillTransition.setFromValue(Color.web("#4D8D6A"));
+            fillTransition.setFromValue(circle.getStyleClass().add("reachnext-colour"));
             fillTransition.setToValue(Color.WHITE);
             //loop controls
             fillTransition.setDuration(Duration.seconds(1));
@@ -56,6 +59,7 @@ public class visualStation {
             fillTransition.setAutoReverse(true);
             //start!!
             fillTransition.play();
+             */
         }
     }
 

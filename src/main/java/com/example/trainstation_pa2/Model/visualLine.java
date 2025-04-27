@@ -1,4 +1,5 @@
 package com.example.trainstation_pa2.Model;
+import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -84,6 +85,16 @@ public class visualLine {
 
         }
         return currentLine;
+    }
+
+    public ArrayList<Circle> getAllCircles() {
+        ArrayList<Circle> circles = new ArrayList<>();
+        for (Node node : currentLine.getChildren()) {
+            if (node instanceof Circle) {
+                circles.add((Circle) node);  // Cast to Circle and add to the list
+            }
+        }
+        return circles;
     }
 
     public void draw(GraphicsContext gc) {

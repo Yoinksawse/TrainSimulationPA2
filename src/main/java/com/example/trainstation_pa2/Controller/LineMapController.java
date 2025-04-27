@@ -1,32 +1,24 @@
 package com.example.trainstation_pa2.Controller;
 
-import com.example.trainstation_pa2.HelloApplication;
 import com.example.trainstation_pa2.Model.visualStation;
-import com.example.trainstation_pa2.VisualApplication;
+import com.example.trainstation_pa2.Model.visualSimulation;
 import javafx.fxml.FXML;
-import javafx.application.Application;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 
-public class LineMapController extends HelloApplication {
-
+public class LineMapController extends HelloController {
     @FXML
     private StackPane mapContainer; //map displayed here
 
     public void showMap() {
-        // Assuming VisualApplication is a class with a method to return a Group or Node to be added
-        VisualApplication visualApp = new VisualApplication();
-        Group mapGroup = visualApp.visualise();  // The visual representation of the map
-        mapContainer.getChildren().clear();  // Clear previous content if any
-        mapContainer.getChildren().add(mapGroup);  // Add the new map to the container
+        visualSimulation visualApp = new visualSimulation();
+        Group mapGroup = visualApp.visualise();
+        mapContainer.getChildren().setAll(mapGroup);  // Replace contents
     }
 
     @FXML
-    protected void initialize(Stage stage) {
+    public void initialize() {
         //TODO: a function that updates the stuff on the map
         // to be used whenever map is changed
         Pane root = new Pane();
@@ -41,12 +33,6 @@ public class LineMapController extends HelloApplication {
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(2));
         pause.setOnFinished(e -> station.updateColor(2));
         pause.play();
-
-        Scene scene = new Scene(root, 500, 1000);
-        stage.setScene(scene);
-        stage.setTitle("MRT Visualizer");
-        stage.show();
-        return;
     }
 
     @FXML

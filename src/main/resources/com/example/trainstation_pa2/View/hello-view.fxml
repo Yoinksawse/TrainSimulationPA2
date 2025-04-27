@@ -204,7 +204,7 @@
                   <Font size="10.0" />
                </font>
             </Hyperlink>
-            <Button fx:id="showMap_button" mnemonicParsing="false" onAction="#showMap" text="Display Map" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="showMap_button" mnemonicParsing="false" onAction="#displayMap" text="Display Map" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />
