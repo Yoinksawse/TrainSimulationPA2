@@ -80,6 +80,14 @@ public class Line {
         return travelTime.get(index-1);
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
     public String toString() {
         String result = stations.get(0).toString() + "\n";
         for (int i = 1; i < stations.size(); i++) {

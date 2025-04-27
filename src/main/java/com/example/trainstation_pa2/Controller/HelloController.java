@@ -10,6 +10,7 @@ import com.example.trainstation_pa2.Model.Train;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 
@@ -45,6 +46,7 @@ public class HelloController {
     public static String linefilename;
     ArrayList<Train> curDisplayedTrains = new ArrayList<>();
     Simulation simul;
+    private LineMapController lineMapController; //visualisation
 
     @FXML
     public void initialize() {
@@ -86,6 +88,12 @@ public class HelloController {
 
         //about programmer link input
         aboutprogrammer_link.setOnAction(event -> showIntro());
+
+        // LineMapController invocation bbutton input
+        showMap_button.setOnAction(event -> {
+            // calls showMap() in LineMapController, shows VisualApplication
+            lineMapController.showMap();
+        });
     }
 
     @FXML
@@ -382,17 +390,21 @@ public class HelloController {
     }
 
     //=================Visualisation====================
-    @FXML
-    protected void showMap() {
-        HelloApplication.showMap();
+    public void setLineMapController(LineMapController lineMapController) {
+        this.lineMapController = lineMapController;
     }
 
     @FXML
     protected void updateMap() {
         //TODO: a function that updates the stuff on the map
         // to be used whenever map is changed
-        //LineMapController.update();
+        LineMapController.update();
         return;
     }
 
+    /*
+    @FXML
+    protected void showMap() {
+        HelloApplication.showMap();
+    }*/
 }

@@ -11,9 +11,13 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
 public class HelloApplication extends Application {
+    static Stage exportStage;
+
     @Override
     public void start(Stage stage) throws IOException {
+        exportStage = stage;
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/trainstation_pa2/View/hello-view.fxml"));
 
         Scene scene = new Scene(fxmlLoader.load(), 640, 480);
@@ -40,21 +44,8 @@ public class HelloApplication extends Application {
         }
     }
 
-    //TODO: VISULAISATION
-    public static void showMap() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/about-programmer.fxml"));
-            Scene myScene = new Scene(fxmlLoader.load(), 640, 480);
-            myScene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
-
-            Stage stage = new Stage();
-            stage.setTitle("About Programmer");
-            stage.setScene(myScene);
-            stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static Stage importStage() {
+        return exportStage;
     }
 
     public static void main(String[] args) {
