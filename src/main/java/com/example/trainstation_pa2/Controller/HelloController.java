@@ -45,7 +45,7 @@ public class HelloController {
     private static int timecounter;
     public static String linefilename;
     ArrayList<Train> curDisplayedTrains = new ArrayList<>();
-    Simulation simul;
+    public static Simulation simul;
 
     @FXML
     public void initialize() {
@@ -387,6 +387,9 @@ public class HelloController {
     @FXML
     private void displayMap() {
         this.lineMapController = HelloApplication.showVisualisation();
+        if (lineMapController != null) {
+            lineMapController.initData(this.simul);
+        }
     }
 
     @FXML
@@ -399,6 +402,10 @@ public class HelloController {
         else {
             this.displayMap();
         }
+    }
+
+    public static Simulation getSimulation() {
+        return simul;
     }
 
     public Line getLine() {

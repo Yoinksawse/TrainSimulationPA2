@@ -78,3 +78,9 @@
     -fx-stroke: black;
     -fx-stroke-width: 3;
 }
+
+/* smooth transition for each visualTrain*/
+.trainShape {
+    -fx-translate-x: 0; /* initpos */
+    -fx-transition: -fx-translate-x 0.5s ease-in-out;
+}

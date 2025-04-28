@@ -1,8 +1,8 @@
 package com.example.trainstation_pa2.Controller;
 
-import com.example.trainstation_pa2.Model.Train;
-import com.example.trainstation_pa2.Model.visualStation;
-import com.example.trainstation_pa2.Model.visualTrain;
+import com.example.trainstation_pa2.HelloApplication;
+import com.example.trainstation_pa2.Model.*;
+import com.example.trainstation_pa2.Model.Line;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
@@ -11,38 +11,55 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class LineMapController extends HelloController {
+    @FXML
+    Simulation simulation;
     @FXML
     private StackPane mapContainer; // Map displayed here
     ArrayList<visualTrain> visualTrains = new ArrayList<>();
 
     @FXML
     public void initialize() {
+        simulation = HelloController.getSimulation();
         // 1. Draw the line (representing the railway track) on the stage
-        Line trackLine = new Line(50, 150, 850, 150); //scene.Line, not the line class!
-        trackLine.setStroke(Color.DARKRED);
-        trackLine.setStrokeWidth(15);
-        mapContainer.getChildren().add(trackLine);
+        Line line = simulation.getLine();
+        String lnName = line.getName();
+        String lnCode = line.getCode();
+        ArrayList<Station> arl_stations = line.getStationsARL();
+        ArrayList<Integer> arl_traveltime = line.getTravelTimeARL();
+        visualLine vline = new visualLine(lnName, lnCode, arl_stations, arl_traveltime, 150);
+
+        mapContainer.getChildren().add(vline.visualise());
+        //Line trackLine = new Line(50, 100, 800, 100); //scene.Line, not the line class!
+        //trackLine.setStroke(Color.DARKRED);
+        //trackLine.setStrokeWidth(15);
 
         //2. add all the trains there currently are in the simulation, and add it a) according to their positions + b) states. (using addvisualtrain 2nd overload)
     }
 
-
+    @FXML
+    public void initData(Simulation other) {
+        this.simulation = other;
+    }
 
     @FXML
     protected void addVisualTrain(Train toAdd) {
-        visualTrain train = new visualTrain(toAdd, 50, 150);
+        visualTrain train = new visualTrain(toAdd, 50, 100);
         visualTrains.add(train);
         mapContainer.getChildren().add(train.getTrainShape());
     }
 
     @FXML
     protected void addVisualTrain(Train toAdd, double startX, double startY) {
+        //add new visualtrain
         visualTrain train = new visualTrain(toAdd, startX, startY);
+        //add styles
+        train.getTrainShape().getStyleClass().add("trainShape");
+
         visualTrains.add(train);
         mapContainer.getChildren().add(train.getTrainShape());
     }
@@ -64,6 +81,33 @@ public class LineMapController extends HelloController {
         //TODO: a function that updates the stuff on the map
         // to be used whenever map is changed
         // basically does the same thing as initialize, just that it goes through every train + station status if monitored
+        // 1. Update positions (move the trains along the line based on their speed/state).
+        // Change colors/sizes to represent state (e.g., green = moving, red = stopped).
+        // Add animations (like smooth movement).
         return;
     }
+        /*
+        for (visualTrain vt : visualTrains) {
+            //new position (movement)
+            double newX = calcNewX(vt);
+
+            //bold border? blinking visualLine? (monitoring)
+
+            //colour of border? train state
+
+
+            vt.getTrainShape().setTranslateX(newX);
+        }
+    }
+
+    private double calcNewX(visualTrain t) {
+
+    }
+    */
 }
+
+
+
+
+
+

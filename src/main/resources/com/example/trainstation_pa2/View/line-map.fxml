@@ -6,19 +6,18 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="641.0" prefWidth="797.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.trainstation_pa2.Controller.LineMapController">
+<VBox alignment="CENTER" maxHeight="620" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="797.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.trainstation_pa2.Controller.LineMapController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
    <children>
-      <ImageView fitHeight="390.0" fitWidth="816.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../../../../../Downloads/PA2_visualisation/singaporemap_edited.jpg" />
-         </image>
-         <VBox.margin>
-            <Insets bottom="250.0" />
-         </VBox.margin>
-      </ImageView>
-      <StackPane prefHeight="150.0" prefWidth="200.0" />
+      <StackPane fx:id="mapContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="786.0" stylesheets="@style.css">
+         <children>
+            <ImageView fitHeight="578.0" fitWidth="798.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../../../../../../Downloads/PA2_visualisation/singaporemap_edited.jpg" />
+               </image>
+            </ImageView>
+         </children></StackPane>
    </children>
 </VBox>

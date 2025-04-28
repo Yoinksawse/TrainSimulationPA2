@@ -6,6 +6,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.Group;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.StrokeLineCap;
 
 import java.util.ArrayList;
 
@@ -43,11 +44,14 @@ public class visualLine {
     // Method to generate the visual line and circles on the scene
     public Group visualise() {
         //draw base line for a train's line
-        double linelen = 700;
+        double linelen = 1200;
         Line baseline = new Line(50, 100, 50 + linelen, 100);
-        baseline.setStroke(Color.RED);
-        baseline.setStrokeWidth(4);
+        baseline.setStroke(Color.DARKRED);
+        baseline.setStrokeWidth(15);
+        baseline.setStrokeLineCap(StrokeLineCap.ROUND);
+
         currentLine.getChildren().add(baseline);
+        System.out.println("AAAAA"); // TODO: REMOVE DEBUG PRINT STATEMENT
 
         //create class with visualStation (circles) objects, 1 circle for station & inter-points
         double x_pos = 50;
@@ -67,16 +71,16 @@ public class visualLine {
 
                 for (int j = 0; j < interStationsCount; j++) {
                     //mark out position of interstation
-                    double i_intervallength = linelen / (linesize - 1);
-                    double coarsetune_x = i * i_intervallength;
-                    double j_intervallength = i_intervallength / (interStationsCount + 1);
+                    double i_intervallengthb = linelen / (linesize - 1);
+                    double coarsetune_x = i * i_intervallengthb;
+                    double j_intervallength = i_intervallengthb / (interStationsCount + 1);
                     double finetune_x = (j + 1) * j_intervallength;
-                    double interStationPos = x_pos + coarsetune_x + finetune_x;
+                    x_pos += (coarsetune_x + finetune_x - x_pos);
 
                     //create interstation
-                    Circle interStationCircle = new Circle(interStationPos, y_pos, 10);
+                    Circle interStationCircle = new Circle(x_pos, y_pos, 10);
                     interStationCircle.setStroke(Color.DARKRED);
-                    stationCircle.getStyleClass().add("notreached-colour");
+                    interStationCircle.getStyleClass().add("notreached-colour");
 
                     //append to group
                     currentLine.getChildren().add(interStationCircle);
@@ -97,7 +101,10 @@ public class visualLine {
         return circles;
     }
 
+    /*
     public void draw(GraphicsContext gc) {
 
     }
+
+     */
 }

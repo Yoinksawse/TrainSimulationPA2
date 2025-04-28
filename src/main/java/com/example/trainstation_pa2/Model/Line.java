@@ -1,6 +1,7 @@
 package com.example.trainstation_pa2.Model;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.io.File;
 import java.util.Scanner;
@@ -87,6 +88,15 @@ public class Line {
     public String getCode() {
         return this.code;
     }
+
+    //for visualisation
+    public ArrayList<Station> getStationsARL() {
+        return new ArrayList<>(this.stations);
+    }
+    public ArrayList<Integer> getTravelTimeARL() {
+        return new ArrayList<>(this.travelTime);
+    }
+
 
     public String toString() {
         String result = stations.get(0).toString() + "\n";

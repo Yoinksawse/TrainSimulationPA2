@@ -48,14 +48,17 @@ public class HelloApplication extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/line-map.fxml"));
             //setup scene
-            Scene scene = new Scene(fxmlLoader.load(), 620, 1000);
+            Scene scene = new Scene(fxmlLoader.load(), 1400, 620);
             scene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
 
             Stage stage = new Stage();
+            stage.setResizable(true);
             stage.setTitle("MRT Visualizer");
             stage.setScene(scene);
             stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
             stage.show();
+
+            //export the controller
             return fxmlLoader.getController();
         } catch (Exception e) {
             e.printStackTrace();
