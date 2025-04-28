@@ -8,6 +8,7 @@ public class Train {
     private boolean stopped;
     private boolean delayed;
     private boolean serviceEnded;
+    private boolean monitored;
 
     public Train(String trainID, Line line) {
         if (trainID.length() != 4) {
@@ -53,6 +54,11 @@ public class Train {
         return stopped;
     }
 
+    public boolean isMonitored() {return monitored;}
+
+    public void setMonitored(boolean monitored) {
+        this.monitored = monitored;
+    }
 
     public void setDelayed(boolean delayed) {
         this.delayed = delayed;

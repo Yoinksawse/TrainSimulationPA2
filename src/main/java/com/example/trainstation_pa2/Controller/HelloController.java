@@ -46,7 +46,6 @@ public class HelloController {
     public static String linefilename;
     ArrayList<Train> curDisplayedTrains = new ArrayList<>();
     Simulation simul;
-    private LineMapController lineMapController = new LineMapController(); //visualisation
 
     @FXML
     public void initialize() {
@@ -384,16 +383,29 @@ public class HelloController {
     }
 
     //=================Visualisation====================
+    private LineMapController lineMapController;
     @FXML
     private void displayMap() {
-        HelloApplication.showVisualisation();
+        this.lineMapController = HelloApplication.showVisualisation();
     }
 
     @FXML
     protected void updateMap() {
         //TODO: a function that updates the stuff on the map
         // to be used whenever map is changed
-        LineMapController.update();
-        return;
+        if (lineMapController != null) {
+            lineMapController.update();
+        }
+        else {
+            this.displayMap();
+        }
+    }
+
+    public Line getLine() {
+        return this.simul.getLine();
+    }
+
+    public Train getTrain(String trainID) {
+        return this.simul.getTrain(trainID);
     }
 }

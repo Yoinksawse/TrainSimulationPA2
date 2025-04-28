@@ -1,5 +1,6 @@
 package com.example.trainstation_pa2;
 
+import com.example.trainstation_pa2.Controller.LineMapController;
 import com.example.trainstation_pa2.Model.visualStation;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -43,9 +44,9 @@ public class HelloApplication extends Application {
         }
     }
 
-    public static void showVisualisation() {
+    public static LineMapController showVisualisation() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/about-programmer.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/line-map.fxml"));
             //setup scene
             Scene scene = new Scene(fxmlLoader.load(), 620, 1000);
             scene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
@@ -55,8 +56,10 @@ public class HelloApplication extends Application {
             stage.setScene(scene);
             stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
             stage.show();
+            return fxmlLoader.getController();
         } catch (Exception e) {
-            return;
+            e.printStackTrace();
+            return null;
         }
     }
 
