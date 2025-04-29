@@ -46,9 +46,7 @@ public class visualLine {
         this.thisLine = this.simul.getLine();
         if (this.colourise) initVisited();
 
-
         int curpos = 0; //counter: which station/interstation currently on
-
         // Calculate total travel time (sum of all travel times between stations)
         double totalTravelTime = 0.0;
         double totalStations = this.countStations();
