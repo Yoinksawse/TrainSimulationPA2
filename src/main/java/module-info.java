@@ -1,6 +1,7 @@
 module com.example.trainstation_pa2 {
     requires javafx.controls;
     requires javafx.fxml;
+    requires jdk.compiler;
 
 
     opens com.example.trainstation_pa2 to javafx.fxml;

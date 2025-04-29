@@ -10,6 +10,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class visualLine {
     private String name;
@@ -21,14 +22,20 @@ public class visualLine {
     Train monitored;
     com.example.trainstation_pa2.Model.Line thisLine;
     Group currentLine = new Group();
+    double interval;
+    int timecounter;
+    int totalPoints;
 
     private ArrayList<Station> stations = new ArrayList<>();
     private ArrayList<Integer> travelTime = new ArrayList<>();
     private ArrayList<Integer> interStationCnt = new ArrayList<>();
+    private ArrayList<Double> intervalUnitLength = new ArrayList<>(); //the unit length at each interval (after which station)
+    private ArrayList<Double> preSumWeight = new ArrayList<>();
+    private ArrayList<Integer> preSumInterStationCnt = new ArrayList<>();
     private ArrayList<Integer> visited = new ArrayList<>();
     private ArrayList<Train> trains = new ArrayList<>();
-
-    public visualLine(String name, String code, ArrayList<Station> stations, ArrayList<Integer> travelTime, double y_pos) {
+    //y_pos usually 150
+    public visualLine(String name, String code, ArrayList<Station> stations, ArrayList<Integer> travelTime, double y_pos, int timecounter) {
         this.name = name;
         this.code = code;
         this.y_pos = y_pos;
@@ -36,28 +43,34 @@ public class visualLine {
         this.travelTime.addAll(travelTime);
     }
 
-    public Group visualise(Simulation simul, Train monitored) {
+    public Group visualise(Simulation simul, Train monitored, int timecounter) {
         // prepparation
         currentLine.getChildren().clear();
+        this.timecounter = timecounter;
         this.simul = simul;
         this.monitored = monitored;
+
         this.trains = this.simul.getTrainsARL();
+
         this.colourise = (this.monitored != null);
         this.thisLine = this.simul.getLine();
-        if (this.colourise) initVisited();
+        _init();
+        if (totalPoints != preSumWeight.size() - 1) {
+            calculatePrefixWeights();
+            calculatePrefixInterStationCnt();//TODO: deepseekedit
+        }
 
-        int curpos = 0; //counter: which station/interstation currently on
         // Calculate total travel time (sum of all travel times between stations)
         double totalTravelTime = 0.0;
-        double totalStations = this.countStations();
+        //double totalStations = this.countStations();
         for (int i = 1; i < this.countStations(); i++) {
             int t = getTravelTime(i);
             totalTravelTime += t;
-            totalStations += calcInterstations(t);
+            //totalStations += calcInterstations(t);
         }
 
         // Calculate line length based on total travel time (scaled by a factor)
-        double lineLength = totalTravelTime * 30;
+        double lineLength = totalPoints * 25;
 
         // Draw base line for the train's line
         Line baseline = new Line(50, y_pos, 50 + lineLength, y_pos);
@@ -66,74 +79,83 @@ public class visualLine {
         baseline.setStrokeLineCap(StrokeLineCap.ROUND);
         currentLine.getChildren().add(baseline);
 
-        // Create stations and intermediate points
-        double currentX = 50; // Starting X position
-        double interval = lineLength / (totalStations - 2);
-        for (int i = 1; i < this.countStations(); i++) {
-            // Create main station circle
-            Circle stationCircle = new Circle(currentX, y_pos, 10);
-            stationCircle.setStroke(Color.BLACK);
-            stationCircle.setStrokeWidth(2);
-            curpos++;
+        //store this, will be used for coordinating later.
+        interval = lineLength / (totalPoints - 1);
 
-            //find out the circle colour
-            Color fillColour = Color.WHITE;
-            if (colourise) {
-                if (visited.get(curpos) == 1) fillColour = Color.web("#692F45"); //1 for reached
-                else if (visited.get(curpos) == 0) fillColour = Color.web("#4D8D6A"); // 0 for not reached
-                else if (visited.get(curpos) == 2) { //blinking
-                    fillColour = Color.web("#4D8D6A");
-                    FillTransition ft = new FillTransition(Duration.seconds(0.5), stationCircle);
-                    ft.setFromValue(fillColour);
-                    ft.setToValue(Color.WHITE);
-                    ft.setCycleCount(Animation.INDEFINITE);
-                    ft.setAutoReverse(true);
-                    ft.play();
+        //int totalPoints = this.countStations() + totInterStationCnt;
+        //double actualIntervalLength = (double) totalPoints / (double) totInterStationCnt;
+        //so when i take the current position (in visited) the train is at, * by actualIntervalLength,
+        //that is the "energy level"
+
+        //energy level needs to pass threshold (pre_sum_weight[cnt + 1])
+        //cnt: current inter station number (during visualisation)
+        //cnt + 1: number of the next interstation it will reach
+        //eventually, cnt will == visited.size()
+
+        //so, create a while loop, each time incrementing the current "energy level" by actualIntervalLength
+        //then binary search where this is at inside the "energy level" array
+        //"energy level array": pre_sum of the weight.
+        //needs to be initialised
+        // = accumulate (no of interstations between every 2 stations, multiply by intervalUnitLength[i])
+
+        //arrays: interStationCnt, intervalUnitLength, preSumWeight, preSumInterStationCnt, visited
+
+
+        //System.out.println(preSumWeight.getLast()); //TODO
+
+        // Display first point
+        Circle firstStation = new Circle(50, y_pos, 10); // x=50 matches baseline start
+        firstStation.setStroke(Color.BLACK);
+        firstStation.setStrokeWidth(2);
+        if (colourise) setCircleColour(firstStation, visited.get(0));
+        else firstStation.setFill(Color.WHITE);
+        currentLine.getChildren().add(firstStation);
+
+        System.out.println(visited);
+
+        double unitsPassed = 0;
+        int timeUnit = 0;
+        int interStationsPassed = 0;
+        int stationsPassed = 0;
+        while (timeUnit < visited.size() && interStationsPassed + 1 < this.totalPoints) {
+            //1 jump. in visited (no. of time units)
+            timeUnit++; //actual time unit that matches the interstations and visited array
+            unitsPassed += intervalUnitLength.get(stationsPassed);
+
+            //System.out.println("curunit: " + timeUnit);
+            //System.out.println(intervalUnitLength);
+            //System.out.println(stationsPassed);
+
+            //i just moved past the next interStation!
+            if (Double.compare(unitsPassed, preSumWeight.get(interStationsPassed + 1)) >= 0) {
+                interStationsPassed++;
+
+
+                //i am currently on a station, make big circle
+                Circle point;
+                if (isStationPoint(interStationsPassed)) { //TODO: DEEPSEEKEDIT
+                    stationsPassed++;
+                    double curX = 50 + interStationsPassed * (interval);
+                    point = new Circle(curX, y_pos, 10);
+                    point.setStroke(Color.BLACK);
+                    point.setStrokeWidth(2);
                 }
-            }
-            stationCircle.setFill(fillColour);
-            //stationCircle.getStyleClass().add((i > 0) ? "reached-colour" : "notreached-colour");
-            currentLine.getChildren().add(stationCircle);
-
-            // Calculate spacing to next station if not the last station
-            if (i < this.countStations() - 1) {
-                int t = getTravelTime(i + 1);
-
-                // Calculate number of intermediate points
-                int interStationsCount = calcInterstations(t);
-
-                // Create intermediate points
-                for (int j = 0; j < interStationsCount; j++) {
-                    currentX += interval;
-
-                    Circle interStationCircle = new Circle(currentX, y_pos, 5.5);
-                    interStationCircle.setStroke(Color.BLACK);
-                    interStationCircle.setStrokeWidth(2);
-                    curpos++;
-
-                    //find out the circle colour
-                    Color interFillColour = Color.WHITE;
-                    if (colourise) {
-                        if (visited.get(curpos) == 1) interFillColour = Color.web("#692F45"); //1 for reached
-                        else if (visited.get(curpos) == 0) interFillColour = Color.web("#4D8D6A"); // 0 for not reached
-                        else if (visited.get(curpos) == 2) { //blinking
-                            interFillColour = Color.web("#4D8D6A");
-                            FillTransition ift = new FillTransition(Duration.seconds(0.5), stationCircle);
-                            ift.setFromValue(interFillColour);
-                            ift.setToValue(Color.WHITE);
-                            ift.setCycleCount(Animation.INDEFINITE);
-                            ift.setAutoReverse(true);
-                            ift.play();
-                        }
-                    }
-
-                    interStationCircle.setFill(interFillColour);
-                    //interStationCircle.getStyleClass().add("notreached-colour");
-                    currentLine.getChildren().add(interStationCircle);
+                //i am only on an interstation, make small circle
+                else {
+                    double curX = 50 + interStationsPassed * (interval);
+                    point = new Circle(curX, y_pos, 5.5);
+                    point.setStroke(Color.BLACK);
+                    point.setStrokeWidth(2);
                 }
 
-                // Update currentX for the next station (move by interval)
-                if (i < this.countStations() - 1) currentX += interval;
+                //find out the circle colour
+                if (colourise && timeUnit - 1 < visited.size()) {
+                    setCircleColour(point, visited.get(Math.min((int) unitsPassed, visited.size() - 1)));
+                    System.out.println("A" + unitsPassed);
+
+                }
+                else point.setFill(Color.WHITE);
+                currentLine.getChildren().add(point);
             }
         }
 
@@ -141,51 +163,116 @@ public class visualLine {
         return currentLine;
     }
 
-    //colourise
+    private boolean isStationPoint(int pointIndex) {
+        int accumulated = 0;
+        for (int i = 0; i < interStationCnt.size(); i++) {
+            if (pointIndex == accumulated) return true;
+            accumulated += interStationCnt.get(i) + 1;
+        }
+        return pointIndex == accumulated;
+    }
 
-    private void initVisited() {
-        this.interStationCnt.clear();
+    private void setCircleColour(Circle circle, int state) {
+        if (state == 1) {
+            circle.setFill(Color.web("#692F45")); // reached
+        } else if (state == 2) { // Blinking
+            circle.setFill(Color.web("#4D8D6A"));
+            FillTransition ft = new FillTransition(Duration.seconds(0.5), circle);
+            ft.setFromValue(Color.web("#4D8D6A"));
+            ft.setToValue(Color.WHITE);
+            ft.setCycleCount(Animation.INDEFINITE);
+            ft.setAutoReverse(true);
+            ft.play();
+        } else {
+            circle.setFill(Color.web("#4D8D6A")); // not reached
+        }
+    }
+
+    //colourise
+    private void _init() {
         this.visited.clear();
-        int monitoredStationIndex = this.monitored.getStationIndex();
+        this.interStationCnt.clear();
 
         //init interstationcnt
         int totInterStationCnt = 0;
-        for (int i = 0; i < this.travelTime.size(); i++) {
+        for (int i = 0; i < this.travelTime.size(); i++) { //travelTime[i] = travel time before station i + 1 (between i and i + 1)
             int x = calcInterstations(this.travelTime.get(i));
-            interStationCnt.add(x);
+            interStationCnt.add(x); //number of interstations before a station (0 indexed)
             totInterStationCnt += x;
         }
 
-        //everything before current position
-        int passedInterStationCnt = 1;
-        for (int i = 0; i <= monitoredStationIndex; i++) {
-            passedInterStationCnt += interStationCnt.get(i) + 1; //interstations leading to station + station
-        }
+        //init totPoints
+        this.totalPoints = totInterStationCnt + countStations();
 
-        // moving, need to find out which interstation
-        if (!this.monitored.isStopped()) {
-            int timeToNext = this.travelTime.get(monitoredStationIndex);
-            int minsPassed = timeToNext - this.monitored.getMinutesToNextStop();
-            int intervalLen = interStationCnt.get(monitoredStationIndex);
-            passedInterStationCnt += (int) ((double) minsPassed / timeToNext * intervalLen);
-        }
+        //init presum arrays
+        if (preSumWeight.isEmpty()) calculatePrefixWeights();
+        //System.out.println(preSumWeight);
+        if (preSumInterStationCnt.isEmpty()) calculatePrefixInterStationCnt();
+        //System.out.println(preSumInterStationCnt);
 
-        int totalPoints = this.countStations() + totInterStationCnt;
-
-        for (int i = 0; i < passedInterStationCnt; i++) visited.add(1); //reached
-        if (!monitored.isStopped()) visited.add(2); //moving to
-        while (visited.size() < totalPoints) visited.add(0); //not reached
+        //init visited array
+        for (int i = 0; i < this.timecounter; i++) visited.add(1); // visited
+        if (this.monitored == null);
+        else if (this.monitored.isStopped()) visited.add(1);
+        else visited.add(2); //moving
+        while (visited.size() < totInterStationCnt) visited.add(0); //not visited
     }
 
-    private void monitorTrain (Train train) {
+    private void calculatePrefixInterStationCnt() { //at each station
+        preSumInterStationCnt.clear();
+
+        int accumulateStationCnt = 0;
+        preSumInterStationCnt.add(0);
+
+        for (int i = 0; i < interStationCnt.size(); i++) {
+            accumulateStationCnt += interStationCnt.get(i);
+            preSumInterStationCnt.add(accumulateStationCnt);
+        }
+    }
+
+    private void calculatePrefixWeights() {
+        preSumWeight.clear();
+        intervalUnitLength.clear();
+
+        double accumulateWeight = 0;
+        preSumWeight.add(0.0); // Starting point
+
+        for (int i = 0; i < countStations() - 1; i++) {
+            int interSNTCnt = interStationCnt.get(i);
+            int totalIntervalPoints = travelTime.get(i);
+
+            //weight (traveltime) of each interval between 2 stations
+            double unitWeight = (interSNTCnt > 0) ? ((double) totalIntervalPoints / (double) interSNTCnt + 1) : totalIntervalPoints;
+            intervalUnitLength.add(unitWeight);
+
+            //add weights for intermediate points
+            for (int j = 0; j < interSNTCnt; j++) {
+                accumulateWeight += unitWeight;
+                preSumWeight.add(accumulateWeight);
+            }
+
+            //add weight for station
+            accumulateWeight += unitWeight;
+            preSumWeight.add(accumulateWeight);
+        }
+        System.out.println(intervalUnitLength);
+    }
+
+
+
+
+    //==================================================
+
+    public void monitorTrain (Train train) {
         this.monitored = train;
-        this.visualise(this.simul, this.monitored);
+
+        this.visualise(this.simul, this.monitored, this.timecounter);
     }
 
-    private void deMonitorTrain () {
+    public void deMonitorTrain () {
         //TODO: initialise without colour
         this.monitored = null; //dereference cur monitored
-        this.visualise(this.simul, this.monitored);
+        this.visualise(this.simul, null, this.timecounter);
     }
 
     //=========================================================================
@@ -193,10 +280,9 @@ public class visualLine {
     // Helper method to calculate number of intermediate points
     private int calcInterstations(int travelTime) {
         if (travelTime < 4) {
-            return travelTime;
+            return travelTime - 1;
         }
-        // Logarithmic scaling for larger travel times
-        return (int) (travelTime / Math.log(travelTime));
+        return (int) (travelTime / Math.log(travelTime)) - 1;
     }
 
     public ArrayList<Integer> getInterStationCnt() {
@@ -225,5 +311,9 @@ public class visualLine {
     // Returns the travel time to the next station at the given index
     public int getTravelTime(int index) {
         return travelTime.get(index-1);
+    }
+
+    public double getIntervalLength() {
+        return this.interval;
     }
 }

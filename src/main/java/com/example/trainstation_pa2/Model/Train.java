@@ -76,7 +76,7 @@ public class Train {
         if (serviceEnded) return;   // Don't move the train anymore if the service has ended
 
         if (!stopped) {
-            minutesToNextStop --;
+            minutesToNextStop--;
         }
 
         if (minutesToNextStop <= 0 && !stopped) {

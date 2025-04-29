@@ -6,32 +6,32 @@ public class Station {
     private String name;
 
     public Station(String code, String name) {
-        this.code = code;
-        this.name = name;
-    }
+            this.code = code;
+            this.name = name;
+        }
 
-    // Copy constructor
+        // Copy constructor
     public Station(Station s) {
-        this(s.code, s.name);
-    }
+            this(s.code, s.name);
+        }
 
-    public String getName() {
-        return name;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getCode() {
-        return code;
-    }
+        public String getCode() {
+            return code;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+        public void setCode(String code) {
+            this.code = code;
+        }
 
-    public String toString() {
-        return "[" + code + "] " + name;
+        public String toString() {
+            return "[" + code + "] " + name;
     }
 }

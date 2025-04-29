@@ -25,29 +25,35 @@ public class Line {
     public Line(String filename) throws IOException {
         // NEWLY ADDED FOR PA2
         // TODO: Write your code here
+        //set up io
         File file = new File(filename);
         Scanner input = new Scanner(file);
 
         this.stations = new ArrayList<>();
         this.travelTime = new ArrayList<>();
 
-        //collecting line info (first line of csv file)
-        String lineinfo = input.nextLine();
-        String[] partsLineinfo = lineinfo.split("[,]");
+        //get line info
+        String firstline = input.nextLine();
+        String[] partsLineinfo = firstline.split("[,]");
         this.name = partsLineinfo[0];
         this.code = partsLineinfo[1];
 
-        int i = 0;
+        //get station info
+        boolean firstlinenow = true;
         while (input.hasNext()) {
             String curline = input.nextLine();
             String[] parts = curline.split("[,]");
             String stationCode  = parts[0];
             String stationName = parts[1];
             int stationTravelTime = 0;
-            if (i > 0) stationTravelTime = Integer.parseInt(parts[2]);
 
+            if (firstlinenow) {
+                stations.add(new Station(stationCode, stationName));
+                firstlinenow = false;
+                continue;
+            }
+            stationTravelTime = Integer.parseInt(parts[2]);
             this.appendStation(new Station(stationCode, stationName), stationTravelTime);
-            i++;
         }
     }
 

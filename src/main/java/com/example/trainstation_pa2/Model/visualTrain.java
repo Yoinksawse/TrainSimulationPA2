@@ -1,11 +1,16 @@
 package com.example.trainstation_pa2.Model;
 
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
+import javafx.scene.Group;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.util.Duration;
 
-public class visualTrain {
+public class visualTrain extends Group {
     private Train train;
     private SVGPath trainShape;
     private static ImagePattern imagePattern;
@@ -59,23 +64,46 @@ public class visualTrain {
         if (train.isMonitored()) setMonitored(true);
 
         //4. set the fill (the train image)
-        Image _img = new Image(getClass().getResource("/com/example/trainstation_pa2/View/trainshape.png").toExternalForm());
+        Image _img = new Image(getClass().getResource("/com/example/trainstation_pa2/View/train2.png").toExternalForm());
         imagePattern = new ImagePattern(_img);
         this.trainShape.setFill(imagePattern);
     }
 
     //accessors
-    public void setBorderColour(Color col) {this.trainShape.setStroke(col);}
-    public void setBorderWidth(double width) {this.trainShape.setStrokeWidth(width);}
-    public void setMonitored(boolean isMonitored) {this.trainShape.getStyleClass().add((isMonitored) ? "glossy-border" : "normal-border");}
+    public void setBorderColour(Color col) {
+        this.trainShape.setStroke(col);
+    }
+    public void setBorderWidth(double width) {
+        this.trainShape.setStrokeWidth(width);
+    }
+    public void setMonitored(boolean isMonitored) {
+        trainShape.setEffect(new Glow(0.8));
+        trainShape.setStroke(Color.YELLOW);
+    }
 
     public Train getTrain() {return this.train;}
+    public double getY() {
+        return this.y_pos;
+    }
+    public double getX() {
+        return this.x_pos;
+    }
     //mutators
     public SVGPath getTrainShape() {return this.trainShape;}
+
     public void moveTo(double dx, double dy) {
         x_pos += dx;
         y_pos += dy;
+
+        TranslateTransition transition = new TranslateTransition();
+        transition.setNode(this.trainShape);
+        transition.setDuration(Duration.seconds(Math.abs(dx) * 0.5)); // Adjust speed
+        transition.setByX(dx);
+        transition.setInterpolator(Interpolator.LINEAR);
         trainShape.setTranslateX(x_pos);
         trainShape.setTranslateY(y_pos);
     }
+
+
+
 }

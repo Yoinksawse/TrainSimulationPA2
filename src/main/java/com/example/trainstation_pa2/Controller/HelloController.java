@@ -10,9 +10,7 @@ import com.example.trainstation_pa2.Model.Train;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.*;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -116,6 +114,7 @@ public class HelloController {
 
             //TODO: updatemap: close the window
             // #############################################################################################
+            if (lineMapController != null) lineMapController.closeWindow();
         }
     }
 
@@ -129,7 +128,7 @@ public class HelloController {
 
             displaystations_list.setText(newLine.toString());
             linemonitor_list.setText(simul.toString());
-            //TODO: updatemap: line added, simulation start: list all trains, show the stack
+            //CancelledTODO: updatemap: line added, simulation start: list all trains, show the stack
             // #############################################################################################
 
             //preparations: enable io fields
@@ -184,7 +183,11 @@ public class HelloController {
             }
 
             //all is well
-            simul.addTrain(new Train(newTrainID, this.simul.getLine()));
+            Train newTrain = new Train(newTrainID, this.simul.getLine());
+            simul.addTrain(newTrain);
+            //TODO: updatemap: train added: push the train to the "stack"
+            // #############################################################################################
+            if (lineMapController != null) lineMapController.addVisualTrain(newTrain, 50, 150);
         }
         //exception 3: train id is wrong (length/chars)
         catch(IllegalArgumentException e) {
@@ -204,8 +207,7 @@ public class HelloController {
         displaytrains_list.setText(trainList);
         addtrainid_inputfield.clear();
 
-        //TODO: updatemap: train added: push the train to the "stack"
-        // #############################################################################################
+        linemonitor_list.setText(simul.toString());
     }
 
     @FXML
@@ -228,7 +230,7 @@ public class HelloController {
             //all is well
             displaytrains_list.setText(displayedTrains);
 
-            //TODO: updatemap: tried to find train: make every train in curDisplayedTrains have green colour (match!) or something
+            //CancelledTODO: updatemap: tried to find train: make every train in curDisplayedTrains have green colour (match!) or something
             // #############################################################################################
         }
         //exception 3: train id is wrong (length/chars)
@@ -292,11 +294,13 @@ public class HelloController {
 
             //TODO: updatemap: train under monitoring: make this train have red colour or something
             // #############################################################################################
+            if (lineMapController != null) lineMapController.monitorTrain(monitored);
         }
     }
 
     @FXML
     protected void removeTrain() {
+        Train toRemove;
         String searchedTrain = searchtrain_inputfield.getText();
         //exception 0: monitor field is empty()
         if (searchedTrain.isEmpty()) {
@@ -324,9 +328,9 @@ public class HelloController {
         }
         else {
             System.out.println("removal");
-            String toRemove = curDisplayedTrains.getFirst().getTrainID();
+            toRemove = curDisplayedTrains.getFirst();
             //remove train
-            simul.removeTrain(toRemove);
+            simul.removeTrain(toRemove.getTrainID());
 
             //demonitor
             if (monitored != null && monitored.getTrainID().equals(toRemove)) stopMonitoring();
@@ -345,8 +349,9 @@ public class HelloController {
             searchtrain_inputfield.clear();
 
 
-            //TODO: updatemap: make this train disappear, play a sound file or something
+            //TODO: updatemap: make this train disappear
             // #############################################################################################
+            if (lineMapController != null) lineMapController.removeVisualTrain(toRemove);
         }
     }
 
@@ -361,13 +366,14 @@ public class HelloController {
 
         //TODO: updatemap: monitoring cancelled: make the monitored (red) train have normal colour again
         // #############################################################################################
+        if (lineMapController != null) lineMapController.deMonitorTrain();
     }
 
     @FXML
     protected void nexttick()  {
         if (this.simul.getTrains().length > 0) {
             this.simul.tick();
-            timecounter++;
+            this.timecounter++;
             timecounter_text.setText(String.format("Time: %d min", timecounter));
             linemonitor_list.setText(this.simul.toString());
             if (monitored != null) trainstat_displaybox.setText(monitored.toString());
@@ -375,6 +381,8 @@ public class HelloController {
 
         //TODO: updatemap: ticked: update positions of all trains
         // #############################################################################################
+        lineMapController.initData(this.simul, this.timecounter);
+        if (lineMapController != null) lineMapController.nexttick();
     }
 
     @FXML
@@ -388,20 +396,25 @@ public class HelloController {
     private void displayMap() {
         this.lineMapController = HelloApplication.showVisualisation();
         if (lineMapController != null) {
-            lineMapController.initData(this.simul);
+            lineMapController.initData(this.simul, this.timecounter);
         }
     }
 
+    /*
     @FXML
     protected void updateMap() {
         //TODO: a function that updates the stuff on the map
         // to be used whenever map is changed
         if (lineMapController != null) {
-            lineMapController.update();
+            lineMapController.nexttick();
         }
         else {
             this.displayMap();
         }
+    }*/
+
+    public static int getTimeCounter() {
+        return timecounter;
     }
 
     public static Simulation getSimulation() {
