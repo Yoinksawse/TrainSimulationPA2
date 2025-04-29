@@ -64,6 +64,10 @@ public class Train {
         this.delayed = delayed;
     }
 
+    public int getMinutesToNextStop() {
+        return this.minutesToNextStop;
+    }
+
     // Advances the "progress" of the train by 1 minute
     // If the train is moving and not yet at a stop, keep moving it
     // If the train is moving and reaches a stop, it stops there

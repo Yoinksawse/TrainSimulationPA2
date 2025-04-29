@@ -51,6 +51,16 @@ public class Line {
         }
     }
 
+    //copy constructor
+    public Line(Line other)  {
+        this.stations = other.getStationsARL();
+        this.travelTime = other.getTravelTimeARL();
+
+        this.name = other.name;
+        this.code = other.code;
+    }
+
+
     // Adds a new station
     // The time parameter represents the time required to travel from the last added station to this one
     public void appendStation(Station station, int time) {

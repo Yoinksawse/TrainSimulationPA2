@@ -415,4 +415,8 @@ public class HelloController {
     public Train getTrain(String trainID) {
         return this.simul.getTrain(trainID);
     }
+
+    public static Train getMonitored() {
+        return monitored;
+    }
 }

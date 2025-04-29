@@ -1,18 +1,10 @@
 package com.example.trainstation_pa2.Controller;
 
-import com.example.trainstation_pa2.HelloApplication;
 import com.example.trainstation_pa2.Model.*;
 import com.example.trainstation_pa2.Model.Line;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class LineMapController extends HelloController {
@@ -33,7 +25,7 @@ public class LineMapController extends HelloController {
         ArrayList<Integer> arl_traveltime = line.getTravelTimeARL();
         visualLine vline = new visualLine(lnName, lnCode, arl_stations, arl_traveltime, 150);
 
-        mapContainer.getChildren().add(vline.visualise());
+        mapContainer.getChildren().add(vline.visualise(this.simulation, HelloController.getMonitored()));
         //Line trackLine = new Line(50, 100, 800, 100); //scene.Line, not the line class!
         //trackLine.setStroke(Color.DARKRED);
         //trackLine.setStrokeWidth(15);
@@ -84,7 +76,6 @@ public class LineMapController extends HelloController {
         // 1. Update positions (move the trains along the line based on their speed/state).
         // Change colors/sizes to represent state (e.g., green = moving, red = stopped).
         // Add animations (like smooth movement).
-        return;
     }
         /*
         for (visualTrain vt : visualTrains) {

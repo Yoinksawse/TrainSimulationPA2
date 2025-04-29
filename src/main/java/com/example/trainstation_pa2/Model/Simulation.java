@@ -1,7 +1,9 @@
 package com.example.trainstation_pa2.Model;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Simulation {
     private Line line;
@@ -45,8 +47,12 @@ public class Simulation {
         return trains.toArray(new Train[trains.size()]);
     }
 
+    public ArrayList<Train> getTrainsARL() {
+        return new ArrayList<>(trains);
+    }
+
     public Line getLine() {
-        return line;
+        return new Line(this.line);
     }
 
     public void tick() {
