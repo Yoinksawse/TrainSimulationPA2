@@ -1,9 +1,8 @@
 package com.example.trainstation_pa2;
 
+import com.example.trainstation_pa2.Controller.HelloController;
 import com.example.trainstation_pa2.Controller.LineMapController;
-import com.example.trainstation_pa2.Model.visualStation;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -45,14 +44,17 @@ public class HelloApplication extends Application {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/line-map.fxml"));
             //setup scene
-            Scene scene = new Scene(fxmlLoader.load(), 1400, 620);
+            Scene scene = new Scene(fxmlLoader.load(), 1400, 300);
             scene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
 
             Stage stage = new Stage();
-            stage.setResizable(true);
+            stage.setResizable(false); //TODO
             stage.setTitle("MRT Visualizer");
             stage.setScene(scene);
             stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
+            stage.setOnCloseRequest(event -> {
+                HelloController.resetMap();
+            });
             stage.show();
 
             //export the controller

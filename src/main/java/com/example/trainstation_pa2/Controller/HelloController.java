@@ -1,6 +1,7 @@
 package com.example.trainstation_pa2.Controller;
 
 import com.example.trainstation_pa2.HelloApplication;
+import com.example.trainstation_pa2.Model.TrainTicker;
 import javafx.scene.input.KeyEvent;
 
 import com.example.trainstation_pa2.Model.Line;
@@ -37,12 +38,14 @@ public class HelloController {
     public TextArea displaystations_list;
     public Text timecounter_text;
     public Hyperlink aboutprogrammer_link;
+    public static boolean isMapShowed = false;
 
     //backend fields
     private static Train monitored;
     private static int timecounter;
     public static String linefilename;
     ArrayList<Train> curDisplayedTrains = new ArrayList<>();
+    public static ArrayList<TrainTicker> trainTimeCounter = new ArrayList<>();
     public static Simulation simul;
 
     @FXML
@@ -86,7 +89,10 @@ public class HelloController {
         //about programmer link input
         aboutprogrammer_link.setOnAction(event -> showIntro());
     }
+    public static ArrayList<TrainTicker> getTrainTickers() {
 
+        return trainTimeCounter;
+    }
     @FXML
     protected void resetSimulation () {
         Alert resetConfirmation = new Alert(Alert.AlertType.INFORMATION);
@@ -100,6 +106,7 @@ public class HelloController {
         ButtonType clicked = resetConfirmation.showAndWait().orElse(_cancel);
 
         if (clicked == _reset) {
+            showMap_button.setDisable(true);
             //reset time counter
             timecounter = 0;
             timecounter_text.setText(String.format("Time: %d min", timecounter));
@@ -144,7 +151,7 @@ public class HelloController {
             addtrain_button.setDisable(false);
             resetsimulation_button.setDisable(false);
             tick_button.setDisable(false);
-            showMap_button.setDisable(false);
+            showMap_button.setDisable(true);
             //loadline_button.setDisable(false);
         }
         catch (IOException e) {
@@ -184,10 +191,13 @@ public class HelloController {
 
             //all is well
             Train newTrain = new Train(newTrainID, this.simul.getLine());
+            TrainTicker newTicker = new TrainTicker(newTrain, 0);
+            trainTimeCounter.add(newTicker);
             simul.addTrain(newTrain);
             //TODO: updatemap: train added: push the train to the "stack"
             // #############################################################################################
-            if (lineMapController != null) lineMapController.addVisualTrain(newTrain, 50, 150);
+            showMap_button.setDisable(false);
+            //if (lineMapController != null) lineMapController.addVisualTrain(newTrain, 0, -80);
         }
         //exception 3: train id is wrong (length/chars)
         catch(IllegalArgumentException e) {
@@ -216,7 +226,7 @@ public class HelloController {
         //get trainid from input field
         //line is this line
         String curTargetTrainID = searchtrain_inputfield.getText();
-        System.out.println(curTargetTrainID);
+        //System.out.println(curTargetTrainID);
 
         try {
             String displayedTrains = "";
@@ -291,11 +301,19 @@ public class HelloController {
             trainstat_displaybox.setDisable(false);
             trainnumber_inputfield.setDisable(false);
 
-
             //TODO: updatemap: train under monitoring: make this train have red colour or something
             // #############################################################################################
-            if (lineMapController != null) lineMapController.monitorTrain(monitored);
+            //if (lineMapController != null) lineMapController.addVisualTrain(monitored, 0, 1000);
+            if (lineMapController != null) {
+                lineMapController.resetStations();
+                //lineMapController.monitorTrain(monitored);
+            }
         }
+    }
+
+    @FXML
+    protected void autopilot() {
+
     }
 
     @FXML
@@ -327,13 +345,14 @@ public class HelloController {
             return;
         }
         else {
-            System.out.println("removal");
+            //System.out.println("removal");
             toRemove = curDisplayedTrains.getFirst();
+
             //remove train
             simul.removeTrain(toRemove.getTrainID());
 
             //demonitor
-            if (monitored != null && monitored.getTrainID().equals(toRemove)) stopMonitoring();
+            if (monitored != null && monitored.getTrainID().equals(toRemove.getTrainID())) stopMonitoring();
             linemonitor_list.setText(simul.toString());
 
             //reset displayedtrains
@@ -348,10 +367,23 @@ public class HelloController {
             //clear searchbox
             searchtrain_inputfield.clear();
 
+            //if last train removed
+            if (simul.getTrains().length == 0) {
+                showMap_button.setDisable(true);
+            }
+
+            TrainTicker toBeRemoved = null;
+            for (TrainTicker t: trainTimeCounter) {
+                if (t.getTrain().getTrainID().equals(toRemove.getTrainID())){
+                    toBeRemoved = t;
+                    break;
+                }
+            }
+            trainTimeCounter.remove(toBeRemoved);
 
             //TODO: updatemap: make this train disappear
             // #############################################################################################
-            if (lineMapController != null) lineMapController.removeVisualTrain(toRemove);
+            //if (lineMapController != null) lineMapController.removeVisualTrain(toRemove);
         }
     }
 
@@ -366,13 +398,41 @@ public class HelloController {
 
         //TODO: updatemap: monitoring cancelled: make the monitored (red) train have normal colour again
         // #############################################################################################
-        if (lineMapController != null) lineMapController.deMonitorTrain();
+        //if (lineMapController != null) lineMapController.deMonitorTrain();
     }
 
     @FXML
     protected void nexttick()  {
         if (this.simul.getTrains().length > 0) {
+
+            //Update train delay status to TrainTickers
+            for (Train t: this.simul.getTrains())
+            {
+                for (TrainTicker tt: trainTimeCounter) {
+                    if(t.getTrainID().equals(tt.getTrain().getTrainID())){
+                        tt.setTrain(t);
+                    }
+                }
+            }
+//            for(TrainTicker t: trainTimeCounter) {
+//                if(!t.getTrain().isDelayed() && !t.getTrain().isStopped()
+//                    || (t.getTrainTicker() == 0 && t.getTrain().isStopped() && !t.getTrain().isDelayed()) //corner case, train at first station and stopped and not delay
+//                )
+//                    t.inc();
+//            }
+
             this.simul.tick();
+
+            for(TrainTicker t: trainTimeCounter) {
+                if(!t.getTrain().isDelayed())
+                    t.inc();
+            }
+//            for(TrainTicker t: trainTimeCounter) {
+//                if(t.getTrainTicker() == 1 && t.getTrain().isStopped() && t.getTrain().isDelayed()) {//corner case, train at first station and stopped and not delay
+//                    t.dec();
+//                }
+//            }
+
             this.timecounter++;
             timecounter_text.setText(String.format("Time: %d min", timecounter));
             linemonitor_list.setText(this.simul.toString());
@@ -381,8 +441,10 @@ public class HelloController {
 
         //TODO: updatemap: ticked: update positions of all trains
         // #############################################################################################
-        lineMapController.initData(this.simul, this.timecounter);
-        if (lineMapController != null) lineMapController.nexttick();
+        if (lineMapController != null){
+            lineMapController.initData(this.simul, this.timecounter);
+            lineMapController.nexttick();
+        }
     }
 
     @FXML
@@ -394,9 +456,23 @@ public class HelloController {
     private LineMapController lineMapController;
     @FXML
     private void displayMap() {
-        this.lineMapController = HelloApplication.showVisualisation();
-        if (lineMapController != null) {
-            lineMapController.initData(this.simul, this.timecounter);
+        if(!isMapShowed) {
+            this.lineMapController = HelloApplication.showVisualisation();
+
+            if(lineMapController != null) {
+                if(monitored != null) {
+                    for (TrainTicker t: HelloController.getTrainTickers()) {
+                        if (t.getTrain().getTrainID().equals(monitored.getTrainID())){
+                            lineMapController.initData(simul, t.getTrainTicker());
+                            break;
+                        }
+                    }
+                } else {
+                    lineMapController.initData(simul, 0);
+                }
+                lineMapController.initialize();
+                isMapShowed = true;
+            }
         }
     }
 
@@ -412,6 +488,11 @@ public class HelloController {
             this.displayMap();
         }
     }*/
+
+    public static void resetMap() {
+        isMapShowed = false;
+
+    }
 
     public static int getTimeCounter() {
         return timecounter;

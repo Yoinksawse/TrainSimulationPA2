@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -11,13 +9,6 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
    <children>
-      <StackPane fx:id="mapContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="235.0" prefWidth="786.0" stylesheets="@style.css">
-         <children>
-            <ImageView fitHeight="578.0" fitWidth="798.0" opacity="0.63" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../../../../../../Downloads/PA2_visualisation/singaporemap_edited.jpg" />
-               </image>
-            </ImageView>
-         </children></StackPane>
+      <StackPane fx:id="mapContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="798.0" stylesheets="@style.css" />
    </children>
 </VBox>

@@ -10,14 +10,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-public class visualTrain extends Group {
+public class VisualTrain extends Group {
     private Train train;
     private SVGPath trainShape;
     private static ImagePattern imagePattern;
     private double x_pos, y_pos;
 
     //constructor
-    public visualTrain(Train train, double startX, double startY) {
+    public VisualTrain(Train train, double startX, double startY) {
         this.train = train;
         //1. draw: outline of the train, changes colour
         this.trainShape = new SVGPath();
@@ -67,6 +67,9 @@ public class visualTrain extends Group {
         Image _img = new Image(getClass().getResource("/com/example/trainstation_pa2/View/train2.png").toExternalForm());
         imagePattern = new ImagePattern(_img);
         this.trainShape.setFill(imagePattern);
+
+        this.trainShape.setScaleX(0.1);
+        this.trainShape.setScaleY(0.1);
     }
 
     //accessors
@@ -91,9 +94,11 @@ public class visualTrain extends Group {
     //mutators
     public SVGPath getTrainShape() {return this.trainShape;}
 
-    public void moveTo(double dx, double dy) {
-        x_pos += dx;
-        y_pos += dy;
+    public void moveTo(double newX, double newY) {
+        double dy = newY - y_pos;
+        double dx = newX - x_pos;
+        x_pos = newX;
+        y_pos = newY;
 
         TranslateTransition transition = new TranslateTransition();
         transition.setNode(this.trainShape);
@@ -103,7 +108,4 @@ public class visualTrain extends Group {
         trainShape.setTranslateX(x_pos);
         trainShape.setTranslateY(y_pos);
     }
-
-
-
 }

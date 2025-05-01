@@ -47,10 +47,6 @@ public class Simulation {
         return trains.toArray(new Train[trains.size()]);
     }
 
-    public ArrayList<Train> getTrainsARL() {
-        return new ArrayList<>(trains);
-    }
-
     public Line getLine() {
         return new Line(this.line);
     }
