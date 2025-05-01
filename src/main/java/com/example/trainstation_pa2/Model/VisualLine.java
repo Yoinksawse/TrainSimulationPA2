@@ -95,14 +95,23 @@ public class VisualLine {
 
         // show station name
         if (atStation) {
+            String stationName = stations.get(stationNo).getName();
+            double adjustment = stationName.length();
+            if (stationName.length() <= 5) {
+                adjustment += stationName.length();
+            }
+            if (stationName.length() >= 10) {
+                adjustment *= -(0.01 * stationName.length());
+            }
+
             javafx.scene.text.Text stationLabel = new javafx.scene.text.Text(
-                    ((pointsPassed) * interval) + 20,
+                    (pointsPassed* interval) + (adjustment * 0.17),
                     y_pos + 50,
-                    stations.get(stationNo).getName()
+                    stationName
             );
             stationLabel.setFill(Color.BLACK);
             stationLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: bold;");
-            stationLabel.setRotate(-75);
+            stationLabel.setRotate(-60);
             currentLine.getChildren().add(stationLabel);
         }
     }
