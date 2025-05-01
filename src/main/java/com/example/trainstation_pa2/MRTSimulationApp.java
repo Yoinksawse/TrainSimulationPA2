@@ -1,7 +1,7 @@
 package com.example.trainstation_pa2;
 
-import com.example.trainstation_pa2.Controller.HelloController;
 import com.example.trainstation_pa2.Controller.LineMapController;
+import com.example.trainstation_pa2.Controller.MRTMainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 
-public class HelloApplication extends Application {
+public class MRTSimulationApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/trainstation_pa2/View/hello-view.fxml"));
@@ -26,14 +26,14 @@ public class HelloApplication extends Application {
 
     public static void showIntro() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/about-programmer.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/about-programmer.fxml"));
             Scene myScene = new Scene(fxmlLoader.load(), 320, 480);
-            myScene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
+            myScene.getStylesheets().add(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
 
             Stage stage = new Stage();
             stage.setTitle("About Programmer");
             stage.setScene(myScene);
-            stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
+            stage.getIcons().add(new Image(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
             stage.show();
         } catch (IOException e) {
             return;
@@ -42,18 +42,18 @@ public class HelloApplication extends Application {
 
     public static LineMapController showVisualisation() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/line-map.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/line-map.fxml"));
             //setup scene
             Scene scene = new Scene(fxmlLoader.load(), 1400, 300);
-            scene.getStylesheets().add(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
+            scene.getStylesheets().add(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/style.css").toExternalForm());
 
             Stage stage = new Stage();
             stage.setResizable(false); //TODO
             stage.setTitle("MRT Visualizer");
             stage.setScene(scene);
-            stage.getIcons().add(new Image(HelloApplication.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
+            stage.getIcons().add(new Image(MRTSimulationApp.class.getResource("/com/example/trainstation_pa2/View/train.png").toExternalForm()));
             stage.setOnCloseRequest(event -> {
-                HelloController.resetMap();
+                MRTMainController.resetMap();
             });
             stage.show();
 

@@ -1,7 +1,6 @@
 package com.example.trainstation_pa2.Model;
 import javafx.animation.Animation;
 import javafx.animation.FillTransition;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -9,7 +8,6 @@ import javafx.scene.Group;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class VisualLine {
     private String name;
@@ -41,21 +39,20 @@ public class VisualLine {
     }
 
     public Group visualise(Simulation simul, Train monitored, int timeCounter) {
-        //prepparations
+        //Clean UI
         currentLine.getChildren().clear();
 
         //setup core datafields
         this.simul = simul;
         this.thisLine = this.simul.getLine();
         this.timeCounter = timeCounter;
-        //this.trains = new ArrayList<>(List.of(simul.getTrains()));
 
-        //monitor?
+        //monitor
         this.monitored = monitored;
         this.colourise = (this.monitored != null);
-        _init(); //start
+        prepareData(); //start prepare data for drawing
 
-        //draw base line
+        //draw baseline
         double lineLength = (totalPoints) * 25;
         interval = lineLength / (totalPoints - 1); //store this, will be used for coordinating later.
 
@@ -78,8 +75,40 @@ public class VisualLine {
         }
         //show last station
         drawStation(pointsPassed, true, this.stations.size() - 1);
-
         return currentLine;
+    }
+
+    private void prepareData() {
+        //clear visited
+        this.visited.clear();
+        this.interStationCnt.clear();
+
+        //init totPoints, interStationCnt
+        int totInterStationCnt = 0;
+        for (int i = 0; i < this.travelTime.size(); i++) { //travelTime[i] = travel time before station i + 1 (between i and i + 1)
+            int x = this.travelTime.get(i) - 1;
+            interStationCnt.add(x); //number of interstations before a station (0 indexed)
+            totInterStationCnt += x;
+        }
+        this.totalPoints = totInterStationCnt + this.stations.size();
+
+        //init visited array
+        if (monitored != null) {
+            int totalTicks = 0;
+            int stopCnt = 1;
+            for (int i=0; i < travelTime.size(); i++){
+                totalTicks += travelTime.get(i) + 1;
+                if (totalTicks < this.timeCounter) {
+                    stopCnt++;
+                }
+            }
+
+            for (int i = 0; i <= timeCounter - stopCnt; i++) visited.add(1);
+            if (!monitored.isStopped() && !monitored.isServiceEnded()) visited.add(2);
+            for (int i = visited.size(); i < totalPoints; i++) visited.add(0);
+
+            if (timeCounter == 0 || timeCounter == 1) visited.set(0, 1);
+        }
     }
 
     private void drawStation(int pointsPassed, boolean atStation, int stationNo) {
@@ -136,64 +165,14 @@ public class VisualLine {
         else circle.setFill(Color.WHITE);
     }
 
-    //colourise
-    private void _init() {
-        //clear before data
-        this.visited.clear();
-        this.interStationCnt.clear();
 
-        //init totPoints, interStationCnt
-        int totInterStationCnt = 0;
-        for (int i = 0; i < this.travelTime.size(); i++) { //travelTime[i] = travel time before station i + 1 (between i and i + 1)
-            int x = this.travelTime.get(i) - 1;
-            interStationCnt.add(x); //number of interstations before a station (0 indexed)
-            totInterStationCnt += x;
-        }
-        this.totalPoints = totInterStationCnt + this.stations.size();
+//    public void resetStations() {
+//        for (Node node : currentLine.getChildren()) {
+//            if (node instanceof Circle) {
+//                Circle circle = (Circle) node;
+//                circle.setFill(Color.WHITE);
+//            }
+//        }
+//    }
 
-        //init visited array
-        if (monitored != null) {
-            int totalTicks = 0;
-            int stopCnt = 1;
-            for (int i=0; i < travelTime.size(); i++){
-                totalTicks += travelTime.get(i) + 1;
-                if (totalTicks < this.timeCounter) {
-                    stopCnt++;
-                }
-            }
-
-            for (int i = 0; i <= timeCounter - stopCnt; i++) visited.add(1);
-            if (!monitored.isStopped() && !monitored.isServiceEnded()) visited.add(2);
-            for (int i = visited.size(); i < totalPoints; i++) visited.add(0);
-
-            if (timeCounter == 0 || timeCounter == 1) visited.set(0, 1);
-        }
-    }
-
-    public void resetStations() {
-        for (Node node : currentLine.getChildren()) {
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                circle.setFill(Color.WHITE);
-            }
-        }
-    }
-
-    //==================================================
-    /*
-    public void monitorTrain(Train train) {
-        this.monitored = train;
-        this.colourise = true;
-        resetStations();
-        monitorTrain(monitored);
-        //this.visualise(simul, monitored, timeCounter);
-    }
-
-
-    public void deMonitorTrain() {
-        this.monitored = null;
-        this.colourise = false;
-        currentLine.getChildren().clear();
-        this.visualise(simul, monitored, timeCounter);
-    } */
 }

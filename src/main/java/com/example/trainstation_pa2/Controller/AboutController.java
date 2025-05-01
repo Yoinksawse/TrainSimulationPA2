@@ -1,13 +1,11 @@
 package com.example.trainstation_pa2.Controller;
 
-import com.example.trainstation_pa2.HelloApplication;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class AboutProgrammerController {
+public class AboutController {
     @FXML
     //frontend fields for aboutprogrammer
     public Button closeintroduction_button;
