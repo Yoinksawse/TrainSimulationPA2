@@ -23,9 +23,6 @@ public class Line {
     }
 
     public Line(String filename) throws IOException {
-        // NEWLY ADDED FOR PA2
-        // TODO: Write your code here
-        //set up io
         File file = new File(filename);
         Scanner input = new Scanner(file);
 
@@ -55,6 +52,7 @@ public class Line {
             stationTravelTime = Integer.parseInt(parts[2]);
             this.appendStation(new Station(stationCode, stationName), stationTravelTime);
         }
+        return;
     }
 
     //copy constructor
@@ -70,7 +68,7 @@ public class Line {
     // Adds a new station
     // The time parameter represents the time required to travel from the last added station to this one
     public void appendStation(Station station, int time) {
-        if (!station.getCode().substring(0, 2).equals(this.code)) {
+        if (!station.getCode().substring(0, this.code.length()).equals(this.code)) {
             throw new IllegalArgumentException("Station codes must start with " + this.code);
         }
 

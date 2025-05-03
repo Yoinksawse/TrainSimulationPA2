@@ -10,6 +10,5 @@ module com.example.trainstation_pa2 {
     opens com.example.trainstation_pa2.Controller to javafx.fxml;
     exports com.example.trainstation_pa2.Model;
     opens com.example.trainstation_pa2.Model to javafx.fxml;
-    exports com.example.trainstation_pa2.View;
     opens com.example.trainstation_pa2.View to javafx.fxml;
 }

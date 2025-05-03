@@ -126,12 +126,10 @@ public class VisualLine {
         if (atStation) {
             String stationName = stations.get(stationNo).getName();
             double adjustment = stationName.length();
-            if (stationName.length() <= 5) {
-                adjustment += stationName.length();
-            }
-            if (stationName.length() >= 10) {
-                adjustment *= -(0.01 * stationName.length());
-            }
+            if (stationName.length() <= 4) adjustment += 30;
+            if (stationName.length() <= 3) adjustment += 90;
+            if (stationName.length() == 2) adjustment += 20;
+            if (stationName.length() >= 10) adjustment *= -(0.01 * stationName.length());
 
             javafx.scene.text.Text stationLabel = new javafx.scene.text.Text(
                     (pointsPassed* interval) + (adjustment * 0.17),

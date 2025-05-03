@@ -73,7 +73,7 @@
                         <Font size="10.0" />
                      </font>
                   </Button>
-                  <TextArea fx:id="displaystations_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
+                  <TextArea fx:id="displaystations_list" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="3" />
                </children>
                <padding>
                   <Insets right="5.0" />
@@ -171,7 +171,7 @@
                         <Font size="10.0" />
                      </font>
                   </Button>
-                  <TextArea fx:id="displaytrains_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                  <TextArea fx:id="displaytrains_list" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2" />
                </children>
                <padding>
                   <Insets right="5.0" />
@@ -188,12 +188,12 @@
                </rowConstraints>
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Line Monitor" />
-                  <Button fx:id="tick_button" mnemonicParsing="false" onAction="#nexttick" prefHeight="30.0" prefWidth="198.0" styleClass="tick_button" text="Tick" GridPane.rowIndex="2">
+                  <Button fx:id="tick_button" mnemonicParsing="false" onAction="#nextTick" prefHeight="30.0" prefWidth="198.0" styleClass="tick_button" text="Tick" GridPane.rowIndex="2">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Button>
-                  <TextArea fx:id="linemonitor_list" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
+                  <TextArea fx:id="linemonitor_list" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             <Hyperlink fx:id="aboutprogrammer_link" onAction="#showIntro" text="About Programmer" GridPane.rowIndex="1">
@@ -204,7 +204,7 @@
                   <Font size="10.0" />
                </font>
             </Hyperlink>
-            <Button fx:id="showMap_button" mnemonicParsing="false" onAction="#displayMap" text="Display Map" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="showMap_button" mnemonicParsing="false" onAction="#displayMap" text="Show Visualisation" GridPane.columnIndex="2" GridPane.rowIndex="1" />
          </children>
          <VBox.margin>
             <Insets />

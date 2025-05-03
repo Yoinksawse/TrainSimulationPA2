@@ -2,6 +2,7 @@ package com.example.trainstation_pa2.Controller;
 
 import com.example.trainstation_pa2.MRTSimulationApp;
 import com.example.trainstation_pa2.Model.TrainTicker;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 
 import com.example.trainstation_pa2.Model.Line;
@@ -47,9 +48,9 @@ public class MRTMainController {
     ArrayList<Train> curDisplayedTrains = new ArrayList<>();
     public static ArrayList<TrainTicker> trainTimeCounter = new ArrayList<>();
     public static Simulation simul;
+    private boolean shownDescription = false;
 
     public static ArrayList<TrainTicker> getTrainTickers() {
-
         return trainTimeCounter;
     }
 
@@ -120,7 +121,10 @@ public class MRTMainController {
             displaytrains_list.clear();
             linemonitor_list.setText(simul.toString());
 
-            if (lineMapController != null) lineMapController.closeWindow();
+            if(lineMapController != null && isMapShowed) {
+                isMapShowed = false;
+                lineMapController.closeWindow();
+            }
         }
     }
 
@@ -128,7 +132,7 @@ public class MRTMainController {
     protected void onAddLine() {
         //load from csv, start simulation
         try {
-            linefilename = String.format("%s.csv", loadlinename_inputfield.getText());
+            linefilename = System.getProperty("user.dir") + String.format("/%s.csv", loadlinename_inputfield.getText());
             Line newLine = new Line(linefilename);
             simul = new Simulation(newLine);
 
@@ -150,10 +154,12 @@ public class MRTMainController {
             showMap_button.setDisable(true);
         }
         catch (IOException e) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("File Error");
-            invalid.setHeaderText("There was a problem reading the file.");
-            invalid.show();
+            showAlert(Alert.AlertType.ERROR,
+                    "File Error",
+                    "There was a problem reading the file.",
+                    ""
+            );
+            return;
         }
     }
 
@@ -165,19 +171,21 @@ public class MRTMainController {
         try {
             //exception 1: train already exists
             if (simul.getTrain(newTrainID) != null) {
-                Alert invalid = new Alert(Alert.AlertType.ERROR);
-                invalid.setTitle("Duplicate Train");
-                invalid.setHeaderText("Trying to create duplicate train!");
-                invalid.show();
+                showAlert(Alert.AlertType.ERROR,
+                        "Duplicate Train",
+                        "Trying to create duplicate train!",
+                        ""
+                );
                 return;
             }
             //exception 2: there is a train in this station
-            for (Train t : simul.getTrains()) {
+            for (Train t : this.simul.getTrains()) {
                 if (t.getStationIndex() == 0) {
-                    Alert invalid = new Alert(Alert.AlertType.ERROR);
-                    invalid.setTitle("Add Train Error");
-                    invalid.setHeaderText("You have already added a train. Add the next train later in the simulation!");
-                    invalid.show();
+                    showAlert(Alert.AlertType.ERROR,
+                            "Add Train Error",
+                            "You have already added a train. Add the next train later in the simulation!",
+                            ""
+                    );
                     return;
                 }
             }
@@ -191,10 +199,12 @@ public class MRTMainController {
         }
         //exception 3: train id is wrong (length/chars)
         catch(IllegalArgumentException e) {
-            Alert invalid = new Alert(Alert.AlertType.INFORMATION);
-            invalid.setTitle("Train ID Error");
-            invalid.setHeaderText(e.toString().substring(36));
-            invalid.show();
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Error",
+                    e.toString().substring(36),
+                    ""
+            );
+            return;
         }
 
         //display list of trains
@@ -214,7 +224,6 @@ public class MRTMainController {
     public void findTrain(KeyEvent keyEvent) {
         curDisplayedTrains.clear();
         //get trainid from input field
-        //line is this line
         String curTargetTrainID = searchtrain_inputfield.getText();
         //System.out.println(curTargetTrainID);
 
@@ -235,10 +244,11 @@ public class MRTMainController {
         }
         //exception 3: train id is wrong (length/chars)
         catch(IllegalArgumentException e) {
-            Alert invalid = new Alert(Alert.AlertType.INFORMATION);
-            invalid.setTitle("Train ID Error");
-            invalid.setHeaderText(e.toString().substring(36));
-            invalid.show();
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Error",
+                    e.toString().substring(36),
+                    ""
+            );
         }
     }
 
@@ -247,27 +257,27 @@ public class MRTMainController {
         String searchedTrain = searchtrain_inputfield.getText();
         //exception 0: monitor field is empty()
         if (searchedTrain.isEmpty()) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("Enter a target train ID.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "Enter a target train ID.",
+                    ""
+            );
         }
         //exception 1: cannot find train
         else if (curDisplayedTrains.isEmpty()) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("No matches found.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "No matches found.",
+                    ""
+            );
         }
         //exception 2: more than 1 target train
         else if (curDisplayedTrains.size() > 1) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("More than one ID matches the criteria. Please refine your search further.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "More than one ID matches the criteria. Please refine your search further.",
+                    ""
+            );
         }
         else {
             //set monitored train
@@ -294,16 +304,18 @@ public class MRTMainController {
             //TODO: updatemap: train under monitoring: make this train have red colour or something
             // #############################################################################################
             //if (lineMapController != null) lineMapController.addVisualTrain(monitored, 0, 1000);
-            if (lineMapController != null) {
-                lineMapController.resetStations();
-                //lineMapController.monitorTrain(monitored);
+            if(lineMapController != null && isMapShowed) {
+                TrainTicker toMonitor = null;
+                for (TrainTicker t: trainTimeCounter) {
+                    if (t.getTrain().getTrainID().equals(monitored.getTrainID())){
+                        toMonitor = t;
+                        break;
+                    }
+                }
+                this.lineMapController.initData(this.simul, toMonitor.getTrainTicker());
+                lineMapController.initialize();
             }
         }
-    }
-
-    @FXML
-    protected void autopilot() {
-
     }
 
     @FXML
@@ -312,27 +324,27 @@ public class MRTMainController {
         String searchedTrain = searchtrain_inputfield.getText();
         //exception 0: monitor field is empty()
         if (searchedTrain.isEmpty()) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("Enter a target train ID.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "Enter a target train ID.",
+                    ""
+            );
         }
         //exception 1: cannot find train
         else if (curDisplayedTrains.isEmpty()) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("No matches found.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "No matches found.",
+                    ""
+            );
         }
         //exception 2: more than 1 target train
         else if (curDisplayedTrains.size() > 1) {
-            Alert invalid = new Alert(Alert.AlertType.ERROR);
-            invalid.setTitle("Train ID Search Error");
-            invalid.setHeaderText("More than one ID matches the criteria. Please refine your search further.");
-            invalid.show();
-            return;
+            showAlert(Alert.AlertType.ERROR,
+                    "Train ID Search Error",
+                    "More than one ID matches the criteria. Please refine your search further.",
+                    ""
+            );
         }
         else {
             //System.out.println("removal");
@@ -372,13 +384,14 @@ public class MRTMainController {
             trainTimeCounter.remove(toBeRemoved);
 
             //TODO: updatemap: make this train disappear
-            //if (lineMapController != null) lineMapController.removeVisualTrain(toRemove);
+            if(lineMapController != null && isMapShowed && toRemove.isMonitored()) {
+                lineMapController.initialize();
+            }
         }
     }
 
     @FXML
     protected void stopMonitoring() {
-        monitored = null;
         trainnumber_inputfield.clear();
         trainstat_displaybox.clear();
         x_button.setDisable(true);
@@ -386,11 +399,15 @@ public class MRTMainController {
         trainnumber_inputfield.setDisable(true);
 
         //TODO: updatemap: monitoring cancelled: make the monitored (red) train have normal colour again
-        //if (lineMapController != null) lineMapController.deMonitorTrain();
+        if(lineMapController != null && isMapShowed && monitored != null) {
+            lineMapController.resetStations();
+            monitored = null;
+        }
+        else monitored = null;
     }
 
     @FXML
-    protected void nexttick()  {
+    protected void nextTick()  {
         if (this.simul.getTrains().length > 0) {
 
             //Update train delay status to TrainTickers
@@ -417,9 +434,16 @@ public class MRTMainController {
         }
 
         //TODO: updatemap: ticked: update positions of all trains
-        if (lineMapController != null){
-            lineMapController.initData(this.simul, this.timecounter);
-            lineMapController.nexttick();
+        if (lineMapController != null && isMapShowed){
+            TrainTicker toMonitor = null;
+            for (TrainTicker t: trainTimeCounter) {
+                if (t.getTrain().getTrainID().equals(monitored.getTrainID())){
+                    toMonitor = t;
+                    break;
+                }
+            }
+            lineMapController.initData(this.simul, toMonitor.getTrainTicker());
+            lineMapController.nextTick();
         }
     }
 
@@ -432,29 +456,54 @@ public class MRTMainController {
     private LineMapController lineMapController;
     @FXML
     private void displayMap() {
-        if(!isMapShowed) {
-            this.lineMapController = MRTSimulationApp.showVisualisation();
+        if(lineMapController != null) this.lineMapController.closeWindow();
+        this.lineMapController = MRTSimulationApp.showVisualisation();
 
-            if(lineMapController != null) {
-                if(monitored != null) {
-                    for (TrainTicker t: MRTMainController.getTrainTickers()) {
-                        if (t.getTrain().getTrainID().equals(monitored.getTrainID())){
-                            lineMapController.initData(simul, t.getTrainTicker());
-                            break;
-                        }
+        if(lineMapController != null) {
+            if(monitored != null) {
+                for (TrainTicker t: MRTMainController.getTrainTickers()) {
+                    if (t.getTrain().getTrainID().equals(monitored.getTrainID())){
+                        lineMapController.initData(simul, t.getTrainTicker());
+                        break;
                     }
-                } else {
-                    lineMapController.initData(simul, 0);
                 }
-                lineMapController.initialize();
-                isMapShowed = true;
+            } else {
+                lineMapController.initData(simul, 0);
             }
+            lineMapController.initialize();
+            isMapShowed = true;
         }
+
+        if (!shownDescription) {
+            shownDescription = true;
+            showAlert(Alert.AlertType.INFORMATION,
+                    "How to use MRT Visualisation!",
+                    "If a train is being monitored, its status will be displayed.\n Else, a bare line showing all the stations and their travel times will be displayed. \nHave fun!",
+                    "Inspired by the Hangzhou Metro!"
+                    );
+        }
+    }
+
+    public static void externalTick() {
+        nextTick();
+    }
+
+    private void showAlert(Alert.AlertType alerttype, String title, String header, String content) {
+        Alert box = new Alert(alerttype);
+        box.setTitle(title);
+        box.setHeaderText(header);
+        box.setContentText(content);
+        box.show();
     }
 
     public static void resetMap() {
         isMapShowed = false;
     }
+
+    public static void setIsMapShowed() {
+        isMapShowed = true;
+    }
+
 
     public static Simulation getSimulation() {
         return simul;
@@ -462,5 +511,9 @@ public class MRTMainController {
 
     public static Train getMonitored() {
         return monitored;
+    }
+
+    public static String getLineName() {
+        return simul.getLine().getName();
     }
 }
